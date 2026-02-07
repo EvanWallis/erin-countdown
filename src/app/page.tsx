@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Countdown = {
   complete: boolean;
@@ -49,6 +49,7 @@ const timeParts = [
 export default function Home() {
   const [countdown, setCountdown] = useState<Countdown>(getCountdown);
   const [shareLabel, setShareLabel] = useState("Copy share link");
+  const celebrationFired = useRef(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -57,6 +58,54 @@ export default function Home() {
 
     return () => clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (!countdown.complete || celebrationFired.current) {
+      return;
+    }
+
+    celebrationFired.current = true;
+    let active = true;
+
+    const runConfetti = async () => {
+      const { default: confetti } = await import("canvas-confetti");
+      const durationMs = 2400;
+      const endTime = Date.now() + durationMs;
+      const colors = ["#d86f4a", "#f3c7b3", "#ffe9dc", "#b05f40"];
+
+      const shoot = () => {
+        if (!active) return;
+
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 65,
+          origin: { x: 0 },
+          colors,
+        });
+
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 65,
+          origin: { x: 1 },
+          colors,
+        });
+
+        if (Date.now() < endTime) {
+          requestAnimationFrame(shoot);
+        }
+      };
+
+      shoot();
+    };
+
+    void runConfetti();
+
+    return () => {
+      active = false;
+    };
+  }, [countdown.complete]);
 
   const handleCopyLink = async () => {
     if (typeof window === "undefined") return;
