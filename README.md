@@ -1,6 +1,13 @@
 # Erin Countdown
 
-A simple shared countdown app for Erin and Evan, counting down to **March 22, 2026**.
+A shared countdown app for Erin and Evan, counting down to **March 22, 2026 at 12:00 AM ET (America/New_York)**.
+
+## Features
+
+- Live countdown timer
+- Confetti celebration when the timer completes
+- Installable as a PWA on mobile home screens
+- Shared URL so both people see the same target moment
 
 ## Run locally
 

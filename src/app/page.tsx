@@ -11,7 +11,8 @@ type Countdown = {
   seconds: number;
 };
 
-const TARGET_DATE = new Date("2026-03-22T00:00:00");
+const TARGET_TIME_ZONE = "America/New_York";
+const TARGET_DATE = new Date("2026-03-22T00:00:00-04:00");
 
 const getCountdown = (): Countdown => {
   const totalMs = TARGET_DATE.getTime() - Date.now();
@@ -37,6 +38,8 @@ const getCountdown = (): Countdown => {
 
 const displayDate = new Intl.DateTimeFormat("en-US", {
   dateStyle: "full",
+  timeStyle: "short",
+  timeZone: TARGET_TIME_ZONE,
 }).format(TARGET_DATE);
 
 const timeParts = [
@@ -57,6 +60,14 @@ export default function Home() {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) {
+      return;
+    }
+
+    void navigator.serviceWorker.register("/sw.js").catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -133,7 +144,7 @@ export default function Home() {
             Erin + Evan
           </h1>
           <p className="max-w-2xl text-sm text-[#734438] sm:text-base">
-            Counting down to {displayDate}. Keep this page open or share the link so both of you can see the same timer.
+            Counting down to {displayDate} ET. Keep this page open or share the link so both of you can see the same timer.
           </p>
         </div>
 
@@ -143,7 +154,7 @@ export default function Home() {
               Reunion Day Is Here
             </h2>
             <p className="mt-2 text-sm text-[#7f4a3b] sm:text-base">
-              March 22 has arrived. No more countdown needed.
+              March 22 in Eastern Time has arrived. No more countdown needed.
             </p>
           </div>
         ) : (
@@ -166,7 +177,7 @@ export default function Home() {
 
         <div className="flex flex-col gap-3 border-t border-[#dcb4a1] pt-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-[#7b4e3d] sm:text-sm">
-            Countdown target: March 22, 2026 at 12:00 AM (your local time)
+            Countdown target: March 22, 2026 at 12:00 AM ET (America/New_York)
           </p>
           <button
             type="button"
